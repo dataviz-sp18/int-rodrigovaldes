@@ -1,0 +1,127 @@
+---
+title: "Evolution of Science"
+author: "Rodrigo Valdes Ortiz"
+date: "5/22/2018"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+```{r}
+library(data.table)
+library(plyr)
+library(ggplot2)
+setwd("/Users/ruy/Documents/UChicago/spring2018/data_viz/a2")
+```
+
+
+```{r}
+# Load the data
+disciplines = fread("data.csv")
+summary = count(disciplines, c('year','discipline'))
+summary_year = count(disciplines, c('year'))
+proportions = merge(summary, summary_year, by = c("year"))
+proportions$prop = proportions$freq.x / proportions$freq.y
+
+```
+
+Inputs {.sidebar}
+-------------------------------------
+
+```{r}
+# shiny inputs defined here
+selectInput("dis", label = "Discipline:",
+            choices = c("Literature", "Biology", "ComputerScience", "Economics", "PolScience", "Medicine", "Physics"), selected = "Literature")
+```
+
+```{r echo=FALSE}
+# Main theme
+blank_theme <- theme_minimal()+
+  theme(
+  panel.border = element_blank(),
+  panel.grid=element_blank(),
+  axis.ticks = element_blank(),
+  plot.title=element_text(size=14, face="bold")
+  )
+```
+
+
+Column
+-------------------------------------
+
+Chart 1
+
+```{r}
+renderPlot({
+  plot_data = summary[summary$discipline == input$dis,]
+
+  ggplot(plot_data, aes(x=year))  + 
+    geom_line(aes(y=freq, color="indianred4"), size = 5) +
+    labs(title = input$dis, y = "Papers in the cluster", x = "Year") +
+    scale_x_continuous(breaks=c(1985, 1990, 1995, 2000)) +
+    scale_y_continuous(breaks=seq(0,550, by = 50)) +
+    blank_theme +
+    theme(legend.position="none") + 
+    theme(axis.text.x = element_text(colour="grey20",size=14,face="plain"),
+          axis.text.y = element_text(colour="grey20",size=14,face="plain"),
+          axis.title.x = element_text(colour="grey20",size=16,face="bold"),
+          axis.title.y = element_text(colour="grey20",size=16,face="bold"),
+          plot.title = element_text(hjust = 0.5, size = 20))
+  
+  
+})
+
+```
+
+Chart 2
+
+```{r}
+
+renderPlot({
+  
+  plot_data = summary[summary$discipline == input$dis,]
+  diference = diff(plot_data$freq, differences = 1)
+  diference[16] = diference[15]
+  plot_data$diference = diference
+  plot_data$change = (plot_data$diference / plot_data$freq) * 100
+  
+  name_t = paste("Percent change in ", input$dis, sep=" ")
+
+  ggplot(plot_data, aes(x=year))  + 
+    geom_line(aes(y=change, color="navyblue"), size = 5) +
+    labs(title = name_t , y = "Percent change", x = "Year") +
+    scale_x_continuous(breaks=c(1985, 1990, 1995, 2000)) +
+    # scale_y_continuous(breaks=seq(0,550, by = 50)) +
+    blank_theme +
+    theme(legend.position="none") + 
+    theme(axis.text.x = element_text(colour="grey20",size=14,face="plain"),
+          axis.text.y = element_text(colour="grey20",size=14,face="plain"),
+          axis.title.x = element_text(colour="grey20",size=16,face="bold"),
+          axis.title.y = element_text(colour="grey20",size=16,face="bold"),
+          plot.title = element_text(hjust = 0.5, size = 20))
+  
+  
+})
+
+
+```
+
+
+*History*
+
+Academic disciplines have evolved in unexpected ways in the last three decades. Each field has evolved differently. For instance, some disciplines have increased its size according to the number of citations. Meanwhile, other disciplines have decreased its size according to the same measure. However, the evolution of academic disciplines has diverse patterns. For example, some disciplines, such as physics in this data, has increased exponentially, but its wrong year to year has not been always the same.
+
+*Why this graphical form?*
+
+Lines help to see trends during a time frame, which is what I want to do.
+
+*Role of interactivity*
+
+Being able to change the graph by academic discipline foster the creation of hypothesis because it makes easy to compare diverse disciplines easily. For instance, why literature has decreased its size but physics has increased?
+
+*NOTE*
+All this is **simulated data** due to propietary data. In the final version, I will use other data.
+
+
+
+
+
