@@ -3,6 +3,7 @@ title: "Evolution of Science"
 author: "Rodrigo Valdes Ortiz"
 date: "5/22/2018"
 output: flexdashboard::flex_dashboard
+# output: html_document
 runtime: shiny
 ---
 
@@ -10,10 +11,10 @@ runtime: shiny
 library(data.table)
 library(plyr)
 library(ggplot2)
-setwd("/Users/ruy/Documents/UChicago/spring2018/data_viz/a2")
+# setwd("/Users/ruy/Documents/UChicago/spring2018/data_viz/a2")
 ```
 
-
+    
 ```{r}
 # Load the data
 disciplines = fread("data.csv")
@@ -23,6 +24,10 @@ proportions = merge(summary, summary_year, by = c("year"))
 proportions$prop = proportions$freq.x / proportions$freq.y
 
 ```
+
+Graphs
+=====================================  
+
 
 Inputs {.sidebar}
 -------------------------------------
@@ -105,6 +110,9 @@ renderPlot({
 
 ```
 
+
+Explanation
+=====================================  
 
 *History*
 

@@ -1,0 +1,12 @@
+name: evolution_of_science
+title: Evolution of Science
+username:
+account: rodrigovaldes
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 347207
+bundleId: 1387286
+url: https://rodrigovaldes.shinyapps.io/evolution_of_science/
+when: 1527007457.56186
+asMultiple: FALSE
+asStatic: FALSE
